@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LensMap AI demo</title>
+  <meta name="description" content="A city advisor that only recommends places that exist, and an LLM pipeline that turns messy announcements into events on a map.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <div>
+        <h1>LensMap AI</h1>
+        <p class="sub">Grounded city advisor &middot; LLM event extraction</p>
+      </div>
+    </div>
+    <div class="top-right">
+      <span id="mode" class="badge">…</span>
+      <button id="about-btn" class="ghost"><span class="long">How it works</span><span class="short">About</span></button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="map-wrap">
+      <div id="map" aria-label="City map"></div>
+      <div class="legend">
+        <span><i class="dot place"></i>place (OSM)</span>
+        <span><i class="dot ev-sample"></i>sample event</span>
+        <span><i class="dot ev-ext"></i>extracted event</span>
+        <span><i class="dot you"></i>you (drag me)</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <nav class="tabs" role="tablist">
+        <button role="tab" class="tab active" data-tab="advisor" aria-selected="true">Ask the advisor</button>
+        <button role="tab" class="tab" data-tab="extract" aria-selected="false">Extract events <span id="ext-count" class="pill" hidden></span></button>
+      </nav>
+
+      <div id="tab-advisor" class="tab-body">
+        <div class="scenario">
+          <label>Demo clock <span id="demo-day" class="muted"></span>
+            <select id="sc-time">
+              <option value="09:00">09:00 morning</option>
+              <option value="13:00">13:00 afternoon</option>
+              <option value="18:30" selected>18:30 evening</option>
+              <option value="23:30">23:30 late night</option>
+            </select>
+          </label>
+          <div class="seg" role="radiogroup" aria-label="Weather">
+            <button data-w="clear" class="on">Clear</button>
+            <button data-w="rain">Rain</button>
+            <button data-w="cold">Cold</button>
+          </div>
+        </div>
+
+        <div id="chat" class="chat" aria-live="polite">
+          <div class="hello">
+            <p>Ask where to go, what is on tonight or where the nearest pharmacy is. The advisor may only recommend places and events that exist in the data on the map, and every answer can be inspected.</p>
+          </div>
+        </div>
+
+        <div class="chips" id="chips"></div>
+        <form id="ask" class="ask">
+          <input id="q" maxlength="300" autocomplete="off" placeholder="Where should I go tonight?">
+          <button class="primary" type="submit">Ask</button>
+          <button id="new-chat" class="ghost" type="button" title="Start a new conversation">New</button>
+        </form>
+      </div>
+
+      <div id="tab-extract" class="tab-body" hidden>
+        <p class="intro">Posts as the crawler collected them on the morning of the demo date. Free text goes to the model; the ticketing page carries schema.org markup and is parsed without it. Coordinates always come from map data. You can edit any post.</p>
+        <div class="row">
+          <button id="extract-btn" class="primary">Extract events</button>
+          <button id="reset-posts" class="ghost">Reset samples</button>
+          <span id="ext-status" class="muted"></span>
+        </div>
+        <div id="ext-summary" class="summary" hidden></div>
+        <div id="posts" class="posts"></div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="about">
+    <h2>How it works</h2>
+    <p><b>Advisor.</b> For every question the server builds a context from the bundled OpenStreetMap snapshot and the event list: places near you (by category for specific questions, a varied set for general ones), opening hours evaluated at the demo clock, the weather and events of the next 48 hours. The model may recommend only items from that context and must return their ids. The server then drops ids that are not in the context, attaches places the model named but forgot to cite, hides cards for items the answer never mentions, and orders the cards as they appear in the text. An answer in the wrong language or script is retried once, then replaced by a template.</p>
+    <p><b>Extraction.</b> Posts are batched (8 per model call) and cached by a hash of their content. The model returns title, date, time, venue and district; the server checks the date against the weekday the post names, validates the 21-day window, geocodes the venue against the map data and falls back to a landmark, the district or the city centre, marking such points as approximate.</p>
+    <p><b>Without an API key</b> recorded answers are replayed for exactly the same requests; anything else is answered from a template over the same context.</p>
+    <p class="muted">Ported from LensMap, a Flutter + Fastify city app. Map data &copy; OpenStreetMap contributors (ODbL). Events and posts are synthetic sample data at real venues.</p>
+    <form method="dialog"><button class="primary">Close</button></form>
+  </dialog>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="app.js" type="module"></script>
+</body>
+</html>

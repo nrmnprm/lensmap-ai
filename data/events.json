@@ -1,0 +1,119 @@
+[
+ {
+  "id": "ev-food-market",
+  "title": "Autumn street-food market",
+  "description": "Food trucks, Uzbek and Korean street food, a DJ from 19:00. Free entry.",
+  "placeId": "osm:way/749136173",
+  "day": 0,
+  "time": "17:00",
+  "minutes": 300
+ },
+ {
+  "id": "ev-piano",
+  "title": "Piano evening: Chopin and Rachmaninoff",
+  "description": "Chamber recital in the composer's house-museum, 40 seats, tickets at the door.",
+  "placeId": "osm:node/1780600187",
+  "day": 0,
+  "time": "19:00",
+  "minutes": 90
+ },
+ {
+  "id": "ev-open-air",
+  "title": "Open-air cinema: classic Uzbek comedies",
+  "description": "Two films with English subtitles, blankets provided.",
+  "placeId": "osm:way/1054961278",
+  "day": 0,
+  "time": "20:30",
+  "minutes": 150
+ },
+ {
+  "id": "ev-jazz",
+  "title": "Jazz jam session",
+  "description": "House trio from 21:00, open jam after 22:30.",
+  "placeId": "osm:node/5164490621",
+  "day": 0,
+  "time": "21:00",
+  "minutes": 180
+ },
+ {
+  "id": "ev-bazaar",
+  "title": "Farmers' breakfast tour",
+  "description": "Guided tasting walk through the bazaar: fresh non, kaymak, dried fruit. In English and Russian.",
+  "placeId": "osm:way/174498975",
+  "day": 1,
+  "time": "08:30",
+  "minutes": 150
+ },
+ {
+  "id": "ev-puppets",
+  "title": "Puppet show: The Clever Hare",
+  "description": "For children 3 to 8, 50 minutes, in Uzbek and Russian.",
+  "placeId": "osm:way/44928476",
+  "day": 1,
+  "time": "10:30",
+  "minutes": 60
+ },
+ {
+  "id": "ev-planetarium",
+  "title": "Kids' science show: stars and planets",
+  "description": "Interactive show under the dome for ages 6 to 12.",
+  "placeId": "osm:way/144714783",
+  "day": 1,
+  "time": "11:00",
+  "minutes": 75
+ },
+ {
+  "id": "ev-photo",
+  "title": "Photo exhibition: Tashkent modernism",
+  "description": "Archive photographs of the city's 1960s-80s architecture.",
+  "placeId": "osm:node/5012624322",
+  "day": 1,
+  "time": "12:00",
+  "minutes": 360
+ },
+ {
+  "id": "ev-walk",
+  "title": "Guided walk: Soviet-era mosaics",
+  "description": "Two-hour walk in English, meeting point at the monument.",
+  "placeId": "osm:way/802384567",
+  "day": 1,
+  "time": "16:00",
+  "minutes": 120
+ },
+ {
+  "id": "ev-standup",
+  "title": "Stand-up night (in Russian)",
+  "description": "Six comedians, open mic in the second half.",
+  "placeId": "osm:node/3318125063",
+  "day": 1,
+  "time": "19:30",
+  "minutes": 120
+ },
+ {
+  "id": "ev-yoga",
+  "title": "Family yoga in the park",
+  "description": "Bring a mat; children welcome.",
+  "placeId": "osm:way/31963687",
+  "day": 2,
+  "time": "10:00",
+  "minutes": 90
+ },
+ {
+  "id": "ev-boardgames",
+  "title": "Board-game afternoon",
+  "description": "Library of 80 games, hosts explain the rules.",
+  "placeId": "osm:node/2956999558",
+  "day": 2,
+  "time": "13:00",
+  "minutes": 240
+ },
+ {
+  "id": "ev-organ",
+  "title": "Organ concert: Bach and Pärt",
+  "description": "The cathedral's organ, 75 minutes, donations welcome.",
+  "placeId": "osm:node/12327792294",
+  "day": 2,
+  "time": "18:00",
+  "minutes": 75
+ }
+]
