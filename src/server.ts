@@ -236,6 +236,7 @@ async function api(req: IncomingMessage, res: ServerResponse, path: string) {
       lng: num(b.lng, -180, 180, city.center.lng),
       scenario: scenarioOf(b.scenario),
       events: [...sampleEvents, ...clientEvents(b.events)],
+      inject: b.inject === true,
     })
     return send(res, 200, out)
   }

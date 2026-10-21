@@ -23,6 +23,7 @@ const state = {
   scenario: { time: '18:30', weather: 'clear' },
   user: null,
   busy: false,
+  inject: false,
 }
 
 /* Preset questions set the demo clock and weather they are meant for.
@@ -181,18 +182,46 @@ function sourceLabel(m) {
   return el('span', { class: 'src fallback', title: m.error || '' }, 'template fallback')
 }
 
+const RESULT = {
+  kept: ['ok', '✓ kept'],
+  recovered: ['warn', '↺ recovered by name'],
+  rejected: ['bad', '✗ rejected'],
+  hidden: ['', '○ hidden'],
+}
+
+function checkTable(trace) {
+  const v = trace.verification
+  const inj = trace.injected?.applied ? trace.injected : null
+  const counts = ['kept', 'recovered', 'rejected', 'hidden'].map((r) => `${r} ${v.rows.filter((x) => x.result === r).length}`).join(' · ')
+  return [
+    el('div', { class: 'counts' }, counts),
+    v.rows.length
+      ? el('table', { class: 'vtable' },
+          el('thead', {}, el('tr', {}, el('th', {}, 'Cited id'), el('th', { title: 'Was this id in the context the server handed to the model for this question?' }, 'Handed out?'), el('th', {}, 'Result'), el('th', {}, 'Name'))),
+          el('tbody', {}, v.rows.map((r) => {
+            const fake = inj && r.id === inj.id
+            const [cls, label] = RESULT[r.result]
+            return el('tr', { class: fake ? 'injected' : '' },
+              el('td', {}, el('code', {}, r.id), r.result === 'recovered' ? el('small', { class: 'muted' }, ' not cited') : null),
+              el('td', {}, r.inContext ? 'yes' : el('b', { class: 'k bad' }, 'no')),
+              el('td', {}, el('span', { class: `k ${cls}` }, label)),
+              el('td', {}, fake ? [inj.name, el('span', { class: 'tag-inj', title: 'Added by the demo switch, not by the model' }, 'injected')] : (r.name ?? state.names.get(r.id) ?? '—')),
+            )
+          })))
+      : el('p', { class: 'muted' }, 'The answer cites nothing and names nothing from the context.'),
+    trace.injected && !trace.injected.applied
+      ? el('p', { class: 'muted' }, 'Nothing was injected: this is a template answer, there is no model output to add a made-up id to.')
+      : null,
+    el('p', { class: 'muted' }, 'Kept: an id handed to the model in this request, named in the answer, so it gets a card. Recovered by name: named in the text without an id, matched by name. Rejected: an id that was not in the context, dropped (its prose is not rewritten). Hidden: cited but never named in the answer, so no card.'),
+  ]
+}
+
 function traceView(trace) {
-  const names = (ids) =>
-    ids.length ? el('ul', {}, ids.map((id) => el('li', {}, state.names.get(id) ?? id))) : el('span', { class: 'muted' }, 'none')
   const m = trace.model
   const panes = {
     Check: () =>
       el('div', {},
-        el('div', { class: 'vrow' }, el('span', { class: 'k ok' }, '✓ cited'), names(trace.verification.cited)),
-        el('div', { class: 'vrow' }, el('span', { class: 'k warn' }, '↺ recovered'), names(trace.verification.recovered)),
-        el('div', { class: 'vrow' }, el('span', { class: 'k bad' }, '✗ rejected'), names(trace.verification.rejected)),
-        el('div', { class: 'vrow' }, el('span', { class: 'k' }, '○ hidden'), names(trace.verification.hidden ?? [])),
-        el('p', { class: 'muted' }, 'Cited: ids the model returned that exist in the context. Recovered: named in the text without an id, matched by name. Rejected: ids that were not in the context, dropped. Hidden: cited but never named in the answer, so no card.'),
+        checkTable(trace),
         el('dl', { class: 'facts' },
           el('dt', {}, 'question'), el('dd', {}, trace.mode === 'direct' ? `specific: ${trace.kinds.join(', ')}` : 'general'),
           el('dt', {}, 'now'), el('dd', {}, trace.now),
@@ -235,12 +264,15 @@ function botMessage(res) {
   if (m.usage) stats.push(`${m.usage.promptTokens + m.usage.completionTokens} tokens`)
   if (m.usage?.costUsd != null) stats.push(`$${m.usage.costUsd.toFixed(5)}`)
   const v = trace.verification
+  const inj = trace.injected?.applied ? trace.injected : null
   if (v.rejected.length) stats.push(`${v.rejected.length} made-up id dropped`)
   if (v.recovered.length) stats.push(`${v.recovered.length} card recovered`)
   if (m.retry) stats.push('retried once')
   return el('div', { class: 'msg bot' },
     el('div', { class: 'bubble' },
-      el('p', {}, res.text),
+      el('p', {}, inj && res.text.endsWith(inj.sentence)
+        ? [res.text.slice(0, -inj.sentence.length), el('mark', { class: 'inj', title: 'Added by the demo switch, not by the model' }, inj.sentence, el('span', { class: 'tag-inj' }, 'injected'))]
+        : res.text),
       res.cards.length
         ? el('div', { class: 'cards' }, res.cards.map((c) =>
             el('button', { class: 'card', type: 'button', onclick: () => focusCard(c) },
@@ -273,11 +305,16 @@ async function ask(q) {
       lng: state.user.lng,
       scenario: state.scenario,
       events: state.extracted,
+      inject: state.inject,
     })
     const msg = botMessage(res)
     typing.replaceWith(msg)
     msg.scrollIntoView({ block: 'nearest' })
-    state.history.push({ role: 'user', text: q }, { role: 'assistant', text: res.text })
+    // The injected sentence is not part of the conversation: without it a
+    // follow-up still matches its recording.
+    const inj = res.trace.injected?.applied ? res.trace.injected.sentence : ''
+    const said = inj && res.text.endsWith(inj) ? res.text.slice(0, -inj.length).trim() : res.text
+    state.history.push({ role: 'user', text: q }, { role: 'assistant', text: said })
     highlight(res.cards)
   } catch (e) {
     typing.replaceWith(el('div', { class: 'msg bot' }, el('div', { class: 'bubble' }, el('p', {}, `Error: ${e.message}`))))
@@ -398,6 +435,7 @@ async function main() {
 
   $('#ask').addEventListener('submit', (ev) => { ev.preventDefault(); ask($('#q').value) })
   $('#sc-time').addEventListener('change', (ev) => { state.scenario.time = ev.target.value })
+  $('#inject').addEventListener('change', (ev) => { state.inject = ev.target.checked })
   for (const b of document.querySelectorAll('.seg button')) b.addEventListener('click', () => setScenario(null, b.dataset.w))
   for (const t of document.querySelectorAll('.tab')) t.addEventListener('click', () => switchTab(t.dataset.tab))
   $('#extract-btn').addEventListener('click', extract)

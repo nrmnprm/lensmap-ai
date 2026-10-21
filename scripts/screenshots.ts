@@ -3,6 +3,9 @@
  *
  *   npm run screenshots            # docs/advisor.jpg, docs/extraction.jpg
  *
+ * The advisor shot has the "Inject a made-up id" switch on, so the check has
+ * something to reject (no recorded answer invents an id by itself).
+ *
  * CHROME=/path/to/chrome overrides the browser; THEME=dark for dark shots. */
 import { spawn } from 'node:child_process'
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs'
@@ -69,11 +72,14 @@ const steps = {
     document.querySelector('[data-tab="extract"]').click()
     document.querySelector('#extract-btn').click()
     await new Promise((r) => setTimeout(r, 1500))`,
-  ask: (q: string) => `
+  ask: (q: string, inject = false) => `
     document.querySelector('[data-tab="advisor"]').click()
+    if (${inject} !== document.querySelector('#inject').checked) document.querySelector('#inject').click()
     ;[...document.querySelectorAll('.chip')].find((b) => b.textContent.startsWith(${JSON.stringify(q)})).click()
     await new Promise((r) => setTimeout(r, 1500))
-    ;[...document.querySelectorAll('.meta button')].at(-1).click()`,
+    ;[...document.querySelectorAll('.meta button')].at(-1).click()
+    const chat = document.querySelector('#chat')
+    chat.scrollTop = chat.scrollHeight`,
 }
 
 try {
@@ -85,9 +91,12 @@ try {
   await cdp('Page.navigate', { url: URL_ })
   await sleep(3000)
   await run(steps.extract)
-  await run(steps.ask('It is pouring'))
+  // Taller, so the answer and the check table fit together.
+  await cdp('Emulation.setDeviceMetricsOverride', { width: 1280, height: 1100, deviceScaleFactor: 2, mobile: false })
+  await run(steps.ask('It is pouring', true))
   await sleep(3500)
   await shot(`advisor${suffix}.jpg`)
+  await cdp('Emulation.setDeviceMetricsOverride', { width: 1280, height: 800, deviceScaleFactor: 2, mobile: false })
 
   await cdp('Page.navigate', { url: URL_ })
   await sleep(3000)

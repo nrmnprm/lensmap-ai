@@ -10,28 +10,31 @@ on a laptop in one command:
   Russian, Uzbek and English go to the model in batches; pages with schema.org markup are parsed
   without it; coordinates always come from map data, never from the model.
 
-![Rainy evening: the advisor recommends a jazz jam session; the inspector shows a hidden citation](docs/advisor.jpg)
+![Rainy evening: the advisor recommends two places, a piano evening and the jazz night at Bootlegger; an injected made-up place is rejected in the check table](docs/advisor.jpg)
 
-*Rain, 18:30. The answer recommends the jazz jam session, so it gets a card. The model also cited a
-bar it never mentions in the text: that card is hidden. The dashed orange marker is an extracted
-event whose venue is only known approximately.*
+*Rain, 18:30, replayed recording. The model recommends Osteri Mario, Dolcetta, the piano evening and
+the jazz night at Bootlegger (an extracted event), and all four ids check out. With **Inject a
+made-up id** on, the demo appends "Hotel Imaginary" (`osm:node/999`) to the answer as if the model
+had invented it, before the check runs: the id was never handed out, so it is rejected and gets no
+card. The sentence stays in the text, marked as injected.*
 
 ## What to look at
 
 | In the demo | Why it matters in production |
 | --- | --- |
-| **Inspect → Check** under every answer: ids the model cited, ids it made up (rejected), places it named but forgot to cite (recovered), citations it never mentioned (hidden) | Hallucinated or irrelevant recommendations never reach the user, and you can see when the model misbehaves |
+| **Inspect → Check** under every answer: one row per id, whether the server handed it out in this request, and the result: kept, recovered by name (named but not cited), rejected (made up), hidden (cited but never mentioned) | Hallucinated or irrelevant recommendations never reach the user, and you can see when the model misbehaves |
+| Tick **Inject a made-up id** and ask again | None of the recorded answers invents an id, so the demo can add one (`osm:node/999`, "Hotel Imaginary") to the model output before the check: it is rejected, gets no card, and is labelled as injected |
 | Change the **demo clock** to 23:30 or the **weather** to rain and ask again | Opening hours and weather are evaluated on the server and given to the model as facts |
 | Ask in Russian, follow up with "anything closer?" | The answer must come back in the language of the question; a wrong-language answer is retried once, then replaced by a template |
 | **Extract events** tab: "this Friday", "yakshanba" (Sunday in Uzbek), a district without a venue, a recruiting post | Weekdays named in the post are checked against the model's date, junk is skipped, uncertain locations are marked as approximate |
 | The ticketing page in the extraction tab | Structured data is read without a model call: cheaper and exact |
 | Run without an API key | Recorded answers are replayed; anything else gets a template answer over the same context instead of an error |
 
-![Extraction tab: a district-only post lands in the district, a post without a venue in the centre, a recruiting post yields nothing](docs/extraction.jpg)
+![Extraction tab: a festival in Yunusabad is matched to a venue of that name, a post without a venue goes to the centre, a recruiting post yields nothing](docs/extraction.jpg)
 
-*A festival "in Yunusabad, near the metro" is placed in the district and marked approximate (dashed
-marker at the top), a board-game night with no venue goes to the city centre, a call for volunteers
-yields no events.*
+*The plov festival "in Yunusabad, near the metro" matches a venue named Yunusabad on the map (a
+sports ground, `osm:way/86487001`) and gets an exact point (the pin icon), a board-game night with no
+venue goes to the city centre and is marked approximate, a call for volunteers yields no events.*
 
 ## Run it
 

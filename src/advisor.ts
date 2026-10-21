@@ -37,6 +37,9 @@ export interface AdvisorRequest {
   lng: number
   scenario: Scenario
   events: CityEvent[]
+  /** Demo switch: append a made-up place to the model's answer before the
+   * check, so a visitor can watch it being rejected. */
+  inject?: boolean
 }
 
 export interface Card {
@@ -68,8 +71,20 @@ export interface AdvisorTrace {
     parsedJson: boolean
   }
   /** cited: valid ids from the model; recovered: named in the text without
-   * an id; rejected: ids not in the context; hidden: cited but never named. */
-  verification: { cited: string[]; recovered: string[]; rejected: string[]; hidden: string[] }
+   * an id; rejected: ids not in the context; hidden: cited but never named.
+   * rows: the same, one row per id, in the order the model cited them. */
+  verification: { cited: string[]; recovered: string[]; rejected: string[]; hidden: string[]; rows: CheckRow[] }
+  /** Set when the visitor asked for a made-up id; applied is false when there
+   * was no model output to add it to (template answer). */
+  injected?: { id: string; name: string; sentence: string; applied: boolean }
+}
+
+export interface CheckRow {
+  id: string
+  /** Was this id handed to the model in this request's context? */
+  inContext: boolean
+  result: 'kept' | 'recovered' | 'rejected' | 'hidden'
+  name: string | null
 }
 
 export interface AdvisorResponse {
@@ -262,7 +277,8 @@ export async function advise(req: AdvisorRequest): Promise<AdvisorResponse> {
     },
     prompt: { system: SYSTEM_PROMPT, user },
     model: { source: 'fallback', name: null, latencyMs: 0, usage: null, raw: null, parsedJson: false },
-    verification: { cited: [], recovered: [], rejected: [], hidden: [] },
+    verification: { cited: [], recovered: [], rejected: [], hidden: [], rows: [] },
+    injected: req.inject ? { ...INJECTED, applied: false } : undefined,
   }
 
   let res = await chat({ system: SYSTEM_PROMPT, user, history, temperature: 0.5 })
@@ -293,12 +309,37 @@ export async function advise(req: AdvisorRequest): Promise<AdvisorResponse> {
     parsedJson: false,
   }
 
-  const parsed = extractJson(res.content)
+  let parsed = extractJson(res.content)
   trace.model.parsedJson = parsed != null
-  const text = answerText(res.content, parsed)
+  let text = answerText(res.content, parsed)
+  // The raw output in the trace stays what the model said.
+  if (req.inject) {
+    ;({ text, parsed } = injectFake(text, parsed))
+    trace.injected = { ...INJECTED, applied: true }
+  }
   const verified = verify(text, parsed, pool, ctxPlaces, query)
   trace.verification = verified.verification
   return { text, cards: cards(text, verified.events, verified.places, req, tz), trace }
+}
+
+/** The made-up place of the demo switch: the same shape as a real
+ * hallucination (an id that looks valid, a name in the prose). No place in
+ * the snapshot has this id. */
+export const INJECTED = {
+  id: 'osm:node/999',
+  name: 'Hotel Imaginary',
+  sentence: 'For the view, end the evening on the rooftop of Hotel Imaginary.',
+}
+
+/** Adds the made-up place to an answer as if the model had written it: the
+ * sentence goes into the text and the id into placeIds. */
+export function injectFake(
+  text: string,
+  parsed: Record<string, unknown> | null,
+): { text: string; parsed: Record<string, unknown> } {
+  const placeIds = Array.isArray(parsed?.placeIds) ? parsed.placeIds.map(String) : []
+  const out = `${text} ${INJECTED.sentence}`.trim()
+  return { text: out, parsed: { ...parsed, text: out, placeIds: [...placeIds, INJECTED.id] } }
 }
 
 /** Small models copy ids with decorations: `id=osm:node/1`, `"osm:node/1"`,
@@ -362,10 +403,19 @@ export function verify(
   const keepCited = citedNamed.length || recovered.length ? citedNamed : cited
   const hidden = cited.filter((id) => !keepCited.includes(id))
   const shown = new Set([...keepCited, ...recovered])
+  const nameOf = new Map([...pool.map((e) => [e.id, e.title] as const), ...ctxPlaces.map((c) => [c.place.id, c.place.name] as const)])
+  const rows: CheckRow[] = [
+    ...[...new Set(resolved.map((r) => r.id ?? r.raw))].map((id): CheckRow =>
+      known.has(id)
+        ? { id, inContext: true, result: hidden.includes(id) ? 'hidden' : 'kept', name: nameOf.get(id) ?? null }
+        : { id, inContext: false, result: 'rejected', name: null },
+    ),
+    ...recovered.map((id): CheckRow => ({ id, inContext: true, result: 'recovered', name: nameOf.get(id) ?? null })),
+  ]
   return {
     events: pool.filter((e) => shown.has(e.id)),
     places: ctxPlaces.filter((c) => shown.has(c.place.id)),
-    verification: { cited, recovered, rejected, hidden },
+    verification: { cited, recovered, rejected, hidden, rows },
   }
 }
 
@@ -447,6 +497,10 @@ function fallback(
       : [ev && `Coming up nearby: ${ev}.`, pl && `${indoor ? 'Indoors' : 'Worth a visit'}: ${pl}.`].filter(Boolean).join(' ') ||
         'Nothing fitting was found nearby in the database.'
   }
-  trace.verification = { cited: [...events.map((e) => e.id), ...picked.map((c) => c.place.id)], recovered: [], rejected: [], hidden: [] }
+  const rows: CheckRow[] = [
+    ...events.map((e): CheckRow => ({ id: e.id, inContext: true, result: 'kept', name: e.title })),
+    ...picked.map((c): CheckRow => ({ id: c.place.id, inContext: true, result: 'kept', name: c.place.name })),
+  ]
+  trace.verification = { cited: rows.map((r) => r.id), recovered: [], rejected: [], hidden: [], rows }
   return { text, cards: cards(text, events, picked, req, tz), trace }
 }

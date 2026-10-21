@@ -2,7 +2,7 @@
  * snapshot, so they run against the bundled data/city.json. */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { answerProblem, answerText, intentKinds, resolveId, verify } from '../src/advisor.ts'
+import { INJECTED, answerProblem, answerText, injectFake, intentKinds, resolveId, verify } from '../src/advisor.ts'
 import { extractJson } from '../src/json.ts'
 import { city } from '../src/city.ts'
 import { postLabel, reconcileWeekday, rejectReason, weekdaysIn } from '../src/extract.ts'
@@ -186,4 +186,35 @@ test('an event is named by the main part of its title', () => {
   const text = 'The autumn street-food market and the piano evening are on tonight.'
   const v = verify(text, { text, eventIds: ['ev-piano', 'ev-market'], placeIds: [] }, [e, m], [])
   assert.deepEqual(v.verification.hidden, [])
+})
+
+test('an injected made-up id is rejected, its prose is left alone and it gets no card', () => {
+  const places = [ctx(place('osm:node/1', 'Café Bon')), ctx(place('osm:node/2', 'Jazz Bar'))]
+  const pool = [event('ev-1', 'Jazz night')]
+  const answer = 'Jazz night starts at 20:00, dinner first at Café Bon.'
+  const { text, parsed } = injectFake(answer, { text: answer, eventIds: ['ev-1'], placeIds: ['osm:node/1'] })
+  assert.equal(text, `${answer} ${INJECTED.sentence}`)
+  assert.deepEqual(parsed.placeIds, ['osm:node/1', INJECTED.id])
+  const v = verify(text, parsed, pool, places)
+  assert.deepEqual(v.verification.rejected, [INJECTED.id])
+  assert.deepEqual(v.verification.cited, ['ev-1', 'osm:node/1'])
+  assert.deepEqual(v.places.map((c) => c.place.id), ['osm:node/1'])
+  assert.deepEqual(v.verification.rows, [
+    { id: 'ev-1', inContext: true, result: 'kept', name: 'Jazz night' },
+    { id: 'osm:node/1', inContext: true, result: 'kept', name: 'Café Bon' },
+    { id: INJECTED.id, inContext: false, result: 'rejected', name: null },
+  ])
+  // A plain-text answer (no JSON) gets the id too.
+  assert.deepEqual(injectFake('Try Café Bon.', null).parsed.placeIds, [INJECTED.id])
+})
+
+test('check rows list hidden and recovered ids with their names', () => {
+  const places = [ctx(place('osm:node/1', 'Puppet Theatre')), ctx(place('osm:node/2', 'Jazz Bar')), ctx(place('osm:node/3', 'Magic Museum'))]
+  const text = 'Take the kids to Puppet Theatre, then the Magic Museum.'
+  const v = verify(text, { text, placeIds: ['osm:node/1', 'osm:node/2'] }, [], places)
+  assert.deepEqual(v.verification.rows.map((r) => [r.id, r.result, r.name]), [
+    ['osm:node/1', 'kept', 'Puppet Theatre'],
+    ['osm:node/2', 'hidden', 'Jazz Bar'],
+    ['osm:node/3', 'recovered', 'Magic Museum'],
+  ])
 })
