@@ -31,7 +31,7 @@ const state = {
 const PRESETS = [
   { q: 'What is on tonight?', time: '18:30', weather: 'clear' },
   { q: 'It is pouring. Where can I go indoors?', time: '18:30', weather: 'rain' },
-  { q: 'Где поесть плов рядом?', time: '13:00', weather: 'clear' },
+  { q: 'Where can I eat plov nearby?', time: '13:00', weather: 'clear' },
   { q: 'Nearest pharmacy that is open now', time: '23:30', weather: 'cold' },
   { q: 'Something for kids tomorrow morning', time: '18:30', weather: 'clear' },
   { q: 'Anything closer?' },

@@ -38,6 +38,7 @@ test('mentionedIn matches whole phrases only', () => {
   assert.ok(!mentionedIn('Try Café 5555 tonight', 'Café 555'))
   assert.ok(!mentionedIn('Dostlik square', 'Dost'))
   assert.ok(mentionedIn('«Ильхом» в 19:00', 'Ильхом'))
+  assert.ok(mentionedIn('Dorikhona “Dori‑Darmon” №2 (1.1 km)', 'Dorikhona "Dori-Darmon" №2'))
 })
 
 test('category stems do not fire inside other words', () => {

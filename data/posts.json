@@ -1,73 +1,73 @@
 [
- {
-  "id": "p1",
-  "source": "Telegram · city events channel",
-  "kind": "text",
-  "publishedAt": "2026-10-06",
-  "text": "🎭 Премьера в «Ильхоме»!\nНовая постановка «Ночной трамвай» — история города, который никогда не спит. Музыка — живой оркестр.\n\n📅 Суббота, 10 октября, 19:00\n🎟 Билеты в кассе театра. 16+"
- },
- {
-  "id": "p2",
-  "source": "Telegram · kids' activities channel",
-  "kind": "text",
-  "publishedAt": "2026-10-07",
-  "text": "Yakshanba kuni soat 11:00 da Yapon bog'ida bolalar uchun origami ustaxonasi bo'lib o'tadi! 🦢 6 yoshdan katta bolalar uchun, ota-onalar bilan. Kirish bepul, qog'oz va qaychi bizdan."
- },
- {
-  "id": "p3",
-  "source": "Telegram · jazz community",
-  "kind": "text",
-  "publishedAt": "2026-10-07",
-  "text": "Jazz night this Friday 🎷 The Silk Road Trio plays two sets at Bootlegger from 8 pm, open jam after 10. Free entry, book a table via DM."
- },
- {
-  "id": "p4",
-  "source": "Telegram · park news",
-  "kind": "text",
-  "publishedAt": "2026-10-08",
-  "text": "Программа выходных в Tashkent City Park 🍂\n\nСуббота\n12:00 — ярмарка ремёсел и фермерских продуктов\n18:30 — концерт под открытым небом «Осенние огни»\n\nВоскресенье\n09:00 — забег на 5 км, регистрация на месте с 8:00\n\nВход на все события свободный."
- },
- {
-  "id": "p5",
-  "source": "Telegram · food festival",
-  "kind": "text",
-  "publishedAt": "2026-10-08",
-  "text": "Завтра в Юнусабаде пройдёт фестиваль плова «Казан-фест»: 20 казанов от поваров со всей страны, мастер-классы и живая музыка. С 10:00 до 16:00, ориентир — метро «Юнусобод»."
- },
- {
-  "id": "p6",
-  "source": "Telegram · board games club",
-  "kind": "text",
-  "publishedAt": "2026-10-07",
-  "text": "Вечер настольных игр в эту пятницу с 19:00! «Мафия», «Каркассон», «Кодовые имена» и чай. Место уточним ближе к дате — следите за каналом 🎲"
- },
- {
-  "id": "p7",
-  "source": "Telegram · festival team",
-  "kind": "text",
-  "publishedAt": "2026-10-06",
-  "text": "Ищем волонтёров в команду осеннего фестиваля! Нужны фотографы, координаторы и люди с хорошим настроением. Анкета — по ссылке в профиле канала."
- },
- {
-  "id": "p8",
-  "source": "Telegram · pub quiz",
-  "kind": "text",
-  "publishedAt": "2026-10-08",
-  "text": "Спасибо всем, кто пришёл вчера на квиз в Cavern club! 🏆 Победила команда «Самса без лука». Следующая игра — 23 октября в 19:30, место то же. Регистрация в боте."
- },
- {
-  "id": "p9",
-  "source": "Telegram · book lovers",
-  "kind": "text",
-  "publishedAt": "2026-10-07",
-  "text": "Save the date: the Autumn Book Fair opens at the National Library on 20 November, 10:00–18:00. Publishers from across Central Asia, readings and signings."
- },
- {
-  "id": "p10",
-  "source": "Web · tickets.example",
-  "kind": "html",
-  "publishedAt": "2026-10-05",
-  "url": "https://tickets.example/gala",
-  "text": "<!doctype html><html><head><title>Autumn Symphony Gala — tickets</title>\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@graph\":[\n {\"@type\":\"MusicEvent\",\"name\":\"Autumn Symphony Gala\",\"startDate\":\"2026-10-10T19:00:00+05:00\",\"endDate\":\"2026-10-10T21:30:00+05:00\",\n  \"location\":{\"@type\":\"Place\",\"name\":\"Navoi Theater\",\"address\":{\"@type\":\"PostalAddress\",\"streetAddress\":\"Atatürk ko'chasi 28\",\"addressLocality\":\"Tashkent\"},\n   \"geo\":{\"@type\":\"GeoCoordinates\",\"latitude\":41.309219,\"longitude\":69.271522}},\n  \"offers\":{\"@type\":\"Offer\",\"price\":150000,\"priceCurrency\":\"UZS\"},\"url\":\"https://tickets.example/gala\"},\n {\"@type\":\"MusicEvent\",\"name\":\"Chamber evening: Strings of the East\",\"startDate\":\"2026-10-14T19:00\",\n  \"location\":{\"@type\":\"Place\",\"name\":\"Navoi Theater\"},\n  \"offers\":{\"@type\":\"Offer\",\"price\":90000,\"priceCurrency\":\"UZS\"},\"url\":\"https://tickets.example/strings\"}\n]}</script></head>\n<body><h1>Autumn Symphony Gala</h1><p>Buy tickets online…</p></body></html>"
- }
+  {
+    "id": "p1",
+    "source": "Telegram · city events channel",
+    "kind": "text",
+    "publishedAt": "2026-10-06",
+    "text": "🎭 Premiere at Ilkhom!\nA new production, \"Night Tram\": the story of a city that never sleeps. Music by a live orchestra.\n\n📅 Saturday, 10 October, 19:00\n🎟 Tickets at the theatre box office. 16+"
+  },
+  {
+    "id": "p2",
+    "source": "Telegram · kids' activities channel",
+    "kind": "text",
+    "publishedAt": "2026-10-07",
+    "text": "This Sunday at 11:00 there's an origami workshop for kids in the Japanese Garden! 🦢 For children aged 6 and up, with their parents. Free entry, we bring the paper and scissors."
+  },
+  {
+    "id": "p3",
+    "source": "Telegram · jazz community",
+    "kind": "text",
+    "publishedAt": "2026-10-07",
+    "text": "Jazz night this Friday 🎷 The Silk Road Trio plays two sets at Bootlegger from 8 pm, open jam after 10. Free entry, book a table via DM."
+  },
+  {
+    "id": "p4",
+    "source": "Telegram · park news",
+    "kind": "text",
+    "publishedAt": "2026-10-08",
+    "text": "Weekend programme at Tashkent City Park 🍂\n\nSaturday\n12:00 — crafts and farmers' market\n18:30 — open-air concert \"Autumn Lights\"\n\nSunday\n09:00 — 5 km run, on-site registration from 8:00\n\nFree entry to all events."
+  },
+  {
+    "id": "p5",
+    "source": "Telegram · food festival",
+    "kind": "text",
+    "publishedAt": "2026-10-08",
+    "text": "Tomorrow Yunusabad hosts the Kazan Fest plov festival: 20 kazans from cooks all over the country, masterclasses and live music. From 10:00 to 16:00, landmark: Yunusobod metro station."
+  },
+  {
+    "id": "p6",
+    "source": "Telegram · board games club",
+    "kind": "text",
+    "publishedAt": "2026-10-07",
+    "text": "Board game night this Friday from 19:00! Mafia, Carcassonne, Codenames and tea. We'll confirm the venue closer to the date, watch the channel 🎲"
+  },
+  {
+    "id": "p7",
+    "source": "Telegram · festival team",
+    "kind": "text",
+    "publishedAt": "2026-10-06",
+    "text": "We're looking for volunteers for the autumn festival team! We need photographers, coordinators and people in a good mood. Sign-up form via the link in the channel profile."
+  },
+  {
+    "id": "p8",
+    "source": "Telegram · pub quiz",
+    "kind": "text",
+    "publishedAt": "2026-10-08",
+    "text": "Thanks to everyone who came to the quiz at Cavern club yesterday! 🏆 The winner was team \"Samsa, Hold the Onions\". Next game: 23 October at 19:30, same place. Register in the bot."
+  },
+  {
+    "id": "p9",
+    "source": "Telegram · book lovers",
+    "kind": "text",
+    "publishedAt": "2026-10-07",
+    "text": "Save the date: the Autumn Book Fair opens at the National Library on 20 November, 10:00–18:00. Publishers from across Central Asia, readings and signings."
+  },
+  {
+    "id": "p10",
+    "source": "Web · tickets.example",
+    "kind": "html",
+    "publishedAt": "2026-10-05",
+    "url": "https://tickets.example/gala",
+    "text": "<!doctype html><html><head><title>Autumn Symphony Gala — tickets</title>\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@graph\":[\n {\"@type\":\"MusicEvent\",\"name\":\"Autumn Symphony Gala\",\"startDate\":\"2026-10-10T19:00:00+05:00\",\"endDate\":\"2026-10-10T21:30:00+05:00\",\n  \"location\":{\"@type\":\"Place\",\"name\":\"Navoi Theater\",\"address\":{\"@type\":\"PostalAddress\",\"streetAddress\":\"Atatürk ko'chasi 28\",\"addressLocality\":\"Tashkent\"},\n   \"geo\":{\"@type\":\"GeoCoordinates\",\"latitude\":41.309219,\"longitude\":69.271522}},\n  \"offers\":{\"@type\":\"Offer\",\"price\":150000,\"priceCurrency\":\"UZS\"},\"url\":\"https://tickets.example/gala\"},\n {\"@type\":\"MusicEvent\",\"name\":\"Chamber evening: Strings of the East\",\"startDate\":\"2026-10-14T19:00\",\n  \"location\":{\"@type\":\"Place\",\"name\":\"Navoi Theater\"},\n  \"offers\":{\"@type\":\"Offer\",\"price\":90000,\"priceCurrency\":\"UZS\"},\"url\":\"https://tickets.example/strings\"}\n]}</script></head>\n<body><h1>Autumn Symphony Gala</h1><p>Buy tickets online…</p></body></html>"
+  }
 ]

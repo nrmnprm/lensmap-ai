@@ -158,8 +158,11 @@ export function phraseIn(textWords: string[], nameWords: string[]): boolean {
 /** Was `name` mentioned in `text` as a whole phrase (not inside a longer
  * word)? From LensMap's advisor: "555" must not match inside "5555". */
 export function mentionedIn(text: string, name: string): boolean {
-  const t = text.toLowerCase()
-  const n = name.toLowerCase().trim()
+  // Models write typographic hyphens and quotes ("Dori‑Darmon", “…”) where the
+  // map has plain ones.
+  const plain = (s: string) => s.toLowerCase().replace(/[‐‑‒–—]/g, '-').replace(/[“”„«»]/g, '"').replace(/[‘’ʼ]/g, "'")
+  const t = plain(text)
+  const n = plain(name).trim()
   if (n.length < 3) return false
   const isWord = (c: string) => /[\p{L}\p{N}]/u.test(c)
   let from = 0

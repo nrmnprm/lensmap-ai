@@ -55,7 +55,7 @@ console.log(`  ${ext.events.length} events, ${ext.trace.calls.length} model call
 const PRESETS: { q: string; scenario: Scenario }[] = [
   { q: 'What is on tonight?', scenario: { time: '18:30', weather: 'clear' } },
   { q: 'It is pouring. Where can I go indoors?', scenario: { time: '18:30', weather: 'rain' } },
-  { q: 'Где поесть плов рядом?', scenario: { time: '13:00', weather: 'clear' } },
+  { q: 'Where can I eat plov nearby?', scenario: { time: '13:00', weather: 'clear' } },
   { q: 'Nearest pharmacy that is open now', scenario: { time: '23:30', weather: 'cold' } },
   { q: 'Something for kids tomorrow morning', scenario: { time: '18:30', weather: 'clear' } },
 ]

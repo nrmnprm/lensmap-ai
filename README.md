@@ -6,8 +6,8 @@ on a laptop in one command:
 - **A city advisor that cannot recommend a place that does not exist.** It answers "where should I
   go tonight?" from map data, events and the weather, returns the ids of everything it recommends,
   and the server checks every id before a card is shown.
-- **An LLM pipeline that turns messy announcements into events on a map.** Telegram-style posts in
-  Russian, Uzbek and English go to the model in batches; pages with schema.org markup are parsed
+- **An LLM pipeline that turns messy announcements into events on a map.** Telegram-style posts
+  (English here; Russian and Uzbek work too) go to the model in batches; pages with schema.org markup are parsed
   without it; coordinates always come from map data, never from the model.
 
 ![Rainy evening: the advisor recommends two places, a piano evening and the jazz night at Bootlegger; an injected made-up place is rejected in the check table](docs/advisor.jpg)
@@ -25,8 +25,8 @@ card. The sentence stays in the text, marked as injected.*
 | **Inspect → Check** under every answer: one row per id, whether the server handed it out in this request, and the result: kept, recovered by name (named but not cited), rejected (made up), hidden (cited but never mentioned) | Hallucinated or irrelevant recommendations never reach the user, and you can see when the model misbehaves |
 | Tick **Inject a made-up id** and ask again | None of the recorded answers invents an id, so the demo can add one (`osm:node/999`, "Hotel Imaginary") to the model output before the check: it is rejected, gets no card, and is labelled as injected |
 | Change the **demo clock** to 23:30 or the **weather** to rain and ask again | Opening hours and weather are evaluated on the server and given to the model as facts |
-| Ask in Russian, follow up with "anything closer?" | The answer must come back in the language of the question; a wrong-language answer is retried once, then replaced by a template |
-| **Extract events** tab: "this Friday", "yakshanba" (Sunday in Uzbek), a district without a venue, a recruiting post | Weekdays named in the post are checked against the model's date, junk is skipped, uncertain locations are marked as approximate |
+| Ask in another language (Russian, say), follow up with "anything closer?" | The answer must come back in the language of the question; a wrong-language answer is retried once, then replaced by a template |
+| **Extract events** tab: "this Friday", "this Sunday", a district without a venue, a recruiting post | Weekdays named in the post are checked against the model's date, junk is skipped, uncertain locations are marked as approximate |
 | The ticketing page in the extraction tab | Structured data is read without a model call: cheaper and exact |
 | Run without an API key | Recorded answers are replayed; anything else gets a template answer over the same context instead of an error |
 
@@ -125,7 +125,7 @@ flowchart LR
   text the user reads.
 - **Small-model date errors are caught by redundancy.** The prompt carries a calendar, the model
   also returns the weekday, and the server checks the date against the weekday the post itself
-  names ("yakshanba", "в эту пятницу", "this Friday"). On a mismatch the post wins.
+  names ("this Friday", or "yakshanba" in an Uzbek post). On a mismatch the post wins.
 - **Coordinates never come from the model.** Extraction returns the venue as written in the post;
   the geocoder finds it on map data (a generic word such as "museum" must match the category, a
   street name is never taken for a venue, a chain with many branches is marked approximate), then

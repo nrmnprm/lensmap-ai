@@ -107,10 +107,31 @@ function nameVariants(t: Record<string, string>): string[] {
   return out
 }
 
+const CYRILLIC = /[\u0400-\u04ff]/
+const TRANSLIT: Record<string, string> = {
+  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'yo', ж: 'zh', з: 'z', и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n',
+  о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '', ы: 'y',
+  ь: '', э: 'e', ю: 'yu', я: 'ya', ў: "o'", қ: 'q', ғ: "g'", ҳ: 'h',
+}
+
+/** Cyrillic to Latin letters, keeping capitals: the English UI shows these. */
+function transliterate(s: string): string {
+  return s.replace(/[\u0400-\u04ff]/g, (c) => {
+    const l = TRANSLIT[c.toLowerCase()] ?? c
+    return c === c.toLowerCase() ? l : l.charAt(0).toUpperCase() + l.slice(1)
+  })
+}
+
+/** The name the UI shows: English if OSM has it, else the first Latin-script
+ * variant (Uzbek Latin, international), else the main name transliterated. */
+function displayName(t: Record<string, string>, names: string[]): string {
+  return t['name:en'] ?? names.find((n) => !CYRILLIC.test(n)) ?? transliterate(t.name)
+}
+
 function address(t: Record<string, string>): string | null {
   const street = t['addr:street']
   if (!street) return null
-  return [street, t['addr:housenumber']].filter(Boolean).join(' ')
+  return transliterate([street, t['addr:housenumber']].filter(Boolean).join(' '))
 }
 
 const elements = await fetchAll()
@@ -128,15 +149,17 @@ for (const el of elements) {
   if (seen.has(id)) continue
   seen.add(id)
   const names = nameVariants(t)
+  const name = displayName(t, names)
+  if (!names.includes(name)) names.push(name)
   if (t.place) {
-    districts.push({ id, name: t['name:en'] ?? t.name, names, lat: pLat, lng: pLng })
+    districts.push({ id, name, names, lat: pLat, lng: pLng })
     continue
   }
   const kind = kindOfTags(t)
   if (!kind) continue
   places.push({
     id,
-    name: t['name:en'] ?? t.name,
+    name,
     names,
     kind,
     lat: Math.round(pLat * 1e6) / 1e6,
