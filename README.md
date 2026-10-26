@@ -1,11 +1,11 @@
 # LensMap AI — grounded city advisor and LLM event extraction
 
-Two AI features from [LensMap](#origin), a city map app I built, extracted into a demo that runs
+Two AI features from [LensMap](#origin), a Flutter city map app I built, extracted into a demo that runs
 on a laptop in one command:
 
-- **A city advisor that cannot recommend a place that does not exist.** It answers "where should I
-  go tonight?" from map data, events and the weather, returns the ids of everything it recommends,
-  and the server checks every id before a card is shown.
+- **A city advisor that answers from map data.** It answers "where should I go tonight?" from
+  OpenStreetMap places, events and the weather, returns the ids of everything it recommends, and
+  the server checks every id against the data it handed out before a card is shown.
 - **An LLM pipeline that turns messy announcements into events on a map.** Telegram-style posts
   (English here; Russian and Uzbek work too) go to the model in batches; pages with schema.org markup are parsed
   without it; coordinates always come from map data, never from the model.
